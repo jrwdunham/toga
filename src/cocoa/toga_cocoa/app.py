@@ -95,6 +95,16 @@ class App(AppInterface):
         appDelegate._interface = self
         self._impl.setDelegate_(appDelegate)
 
+        try:
+            # If the user has menu-creation code, call it.
+            self.create_menu()
+        except AttributeError:
+            self._create_default_menu()
+
+        # Call user code to populate the main window
+        self.startup()
+
+    def _create_default_menu(self):
         app_name = self.name
 
         self.menu = NSMenu.alloc().initWithTitle_('MainMenu')
@@ -127,9 +137,6 @@ class App(AppInterface):
 
         # Set the menu for the app.
         self._impl.setMainMenu_(self.menu)
-
-        # Call user code to populate the main window
-        self.startup()
 
     def main_loop(self):
         # Stimulate the build of the app
